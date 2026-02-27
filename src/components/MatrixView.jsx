@@ -8,7 +8,8 @@ import {
     Shield,
     Clock,
     TrendingUp,
-    Trash2
+    Trash2,
+    LayoutGrid
 } from 'lucide-react';
 
 const STATUS_COLORS = {
@@ -69,7 +70,12 @@ const MatrixView = ({ roadmap, moveFeature, addIdea: propAddIdea, deleteFeature,
             {/* Header Estilo Negocios */}
             <div className="max-w-7xl mx-auto mb-12 border-b border-slate-300 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
-                    <h1 className="text-4xl font-sans font-black tracking-tight mb-3 text-slate-900 drop-shadow-sm">Matriz Ejecutiva</h1>
+                    <h1 className="text-4xl font-sans font-bold tracking-tight mb-3 flex items-center gap-4 text-slate-900 drop-shadow-sm">
+                        <div className="p-3 bg-slate-900 rounded-xl border border-slate-700 shadow-xl">
+                            <LayoutGrid className="text-accent-blue" size={32} />
+                        </div>
+                        Matriz Ejecutiva
+                    </h1>
                     <p className="text-slate-700 font-medium text-lg max-w-2xl leading-relaxed">
                         Sistema de contención estratégica para la transición de la visión comercial a la realidad técnica.
                         Priorice el valor sin comprometer la integridad estructural.
@@ -79,7 +85,7 @@ const MatrixView = ({ roadmap, moveFeature, addIdea: propAddIdea, deleteFeature,
                     onClick={() => setShowIdeaModal(true)}
                     className="bg-accent-blue text-white px-6 py-3 rounded-xl shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] flex items-center gap-2 hover:bg-accent-blue/90 transition-all font-semibold uppercase tracking-wider text-sm"
                 >
-                    <Plus size={20} /> Registrar Nueva Visión
+                    <Plus size={20} /> Nueva Iniciativa
                 </button>
             </div>
 
@@ -99,7 +105,7 @@ const MatrixView = ({ roadmap, moveFeature, addIdea: propAddIdea, deleteFeature,
                             key={version.id}
                             onDragOver={handleDragOver}
                             onDrop={(e) => handleDrop(e, vIdx)}
-                            className="bg-carbon-light border border-white/8 rounded-2xl p-6 relative overflow-hidden flex flex-col group transition-all"
+                            className="bg-carbon-light border border-white/8 rounded-2xl p-6 relative overflow-hidden flex flex-col transition-all"
                         >
                             {/* Accent Top Border */}
                             <div className={`absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r ${topBorderStyle} opacity-90`}></div>
@@ -135,7 +141,7 @@ const MatrixView = ({ roadmap, moveFeature, addIdea: propAddIdea, deleteFeature,
                                         key={feature.id}
                                         draggable
                                         onDragStart={(e) => handleDragStart(e, vIdx, feature.id)}
-                                        className={`bg-carbon-surface border border-white/8 rounded-xl p-5 shadow-lg relative cursor-grab active:cursor-grabbing hover:border-white/20 transition-all hover:-translate-y-1 hover:shadow-2xl ${feature.devStatus === 'Done' ? 'border-l-4 border-l-[#00c875]' : ''}`}
+                                        className={`bg-carbon-surface border border-white/8 rounded-xl p-5 shadow-lg relative cursor-grab active:cursor-grabbing hover:border-white/20 transition-all hover:-translate-y-1 hover:shadow-2xl group ${feature.devStatus === 'Done' ? 'border-l-4 border-l-[#00c875]' : ''}`}
                                     >
                                         <div className="flex justify-between items-start mb-4">
                                             <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded border ${STATUS_COLORS[feature.devStatus]}`}>
@@ -218,7 +224,7 @@ const MatrixView = ({ roadmap, moveFeature, addIdea: propAddIdea, deleteFeature,
             {showIdeaModal && (
                 <div className="fixed inset-0 bg-carbon/80 backdrop-blur-xl flex items-center justify-center p-4 z-[60]">
                     <div className="glass-panel p-8 max-w-lg w-full rounded-2xl relative shadow-2xl border-t-4 border-accent-blue">
-                        <h2 className="text-2xl font-sans font-bold mb-2 text-white text-glow">Declarar Nueva Visión</h2>
+                        <h2 className="text-2xl font-sans font-bold mb-2 text-white text-glow">Nueva Iniciativa</h2>
                         <p className="text-sm text-bone/60 mb-6 leading-relaxed">
                             Registre la iniciativa y se asignará automáticamente al final del backlog. Su impacto real se tasará contra la infraestructura.
                         </p>
@@ -288,7 +294,7 @@ const MatrixView = ({ roadmap, moveFeature, addIdea: propAddIdea, deleteFeature,
                                     onClick={() => setShowIdeaModal(false)}
                                     className="px-6 py-3 border border-white/10 rounded-lg text-bone/60 hover:bg-white/10 hover:text-white uppercase tracking-widest text-xs font-semibold transition-all"
                                 >
-                                    Abortar
+                                    Cancelar
                                 </button>
                                 <button
                                     onClick={() => {
@@ -298,7 +304,7 @@ const MatrixView = ({ roadmap, moveFeature, addIdea: propAddIdea, deleteFeature,
                                     }}
                                     className="px-8 py-3 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/80 transition-all text-xs font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)]"
                                 >
-                                    Inyectar
+                                    Agregar
                                 </button>
                             </div>
                         </div>

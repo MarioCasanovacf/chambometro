@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Target, Zap, LayoutGrid, DollarSign } from 'lucide-react';
+import { Target, Zap, LayoutGrid, DollarSign, Columns3 } from 'lucide-react';
 
 const KANBAN_STAGES = ["Not Started", "Design Phase", "Prototype", "Working on it", "Stuck", "Done", "Obsoleta"];
 
@@ -54,7 +54,12 @@ const KanbanView = ({ roadmap, updateFeatureStatus, settings }) => {
         <div className="bg-transparent p-6 md:p-10 min-h-[85vh] font-sans">
             <div className="max-w-screen-2xl mx-auto mb-10 border-b border-slate-300 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
-                    <h1 className="text-4xl font-sans font-black tracking-tight mb-3 text-slate-900 drop-shadow-sm">Kanban Táctico</h1>
+                    <h1 className="text-4xl font-sans font-bold tracking-tight mb-3 flex items-center gap-4 text-slate-900 drop-shadow-sm">
+                        <div className="p-3 bg-slate-900 rounded-xl border border-slate-700 shadow-xl">
+                            <Columns3 className="text-accent-purple" size={32} />
+                        </div>
+                        Kanban Táctico
+                    </h1>
                     <p className="text-slate-700 font-medium text-lg max-w-2xl leading-relaxed">
                         Flujo de trabajo ágil para el equipo técnico. Arrastre las tarjetas entre las fases para actualizar el progreso general y la visibilidad a ejecutivos.
                     </p>
@@ -71,7 +76,7 @@ const KanbanView = ({ roadmap, updateFeatureStatus, settings }) => {
                             key={stage}
                             onDragOver={handleDragOver}
                             onDrop={(e) => handleDrop(e, stage)}
-                            className="bg-carbon-light border border-white/8 rounded-2xl flex flex-col min-w-[320px] max-w-[360px] flex-shrink-0 snap-start h-[calc(100vh-220px)] shadow-xl relative overflow-hidden group transition-all"
+                            className="bg-carbon-light border border-white/8 rounded-2xl flex flex-col min-w-[260px] max-w-[300px] flex-shrink-0 snap-start h-[calc(100vh-220px)] shadow-xl relative overflow-hidden group transition-all"
                         >
                             {/* Accent Top Sub-line */}
                             <div className={`absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r ${style.border} opacity-90`}></div>

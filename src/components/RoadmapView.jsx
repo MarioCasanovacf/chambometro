@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, MoreHorizontal, Zap, Target, DollarSign, LayoutGrid, Trash2, AlertCircle, Edit3, X, Check } from 'lucide-react';
+import { Plus, MoreHorizontal, Zap, Target, DollarSign, LayoutGrid, Trash2, AlertCircle, Edit3, X, Check, Map } from 'lucide-react';
 
 const STATUS_COLORS = {
     "Done": "bg-[#00c875]/20 text-[#00c875] border-[#00c875]/30",
@@ -51,7 +51,12 @@ const RoadmapView = ({ roadmap, addIdea, updateFeatureStatus, deleteFeature, add
     return (
         <div className="p-6 md:p-10 max-w-7xl mx-auto font-sans bg-transparent min-h-[85vh]">
             <div className="mb-10 border-b border-slate-300 pb-8">
-                <h1 className="text-4xl font-black mb-3 font-sans tracking-tight text-slate-900 drop-shadow-sm">Roadmap Financiero y Operativo</h1>
+                <h1 className="text-4xl font-bold mb-3 font-sans tracking-tight flex items-center gap-4 text-slate-900 drop-shadow-sm">
+                    <div className="p-3 bg-slate-900 rounded-xl border border-slate-700 shadow-xl">
+                        <Map className="text-accent-emerald" size={32} />
+                    </div>
+                    Roadmap Financiero y Operativo
+                </h1>
                 <p className="text-slate-700 font-medium text-lg max-w-2xl leading-relaxed">Diseño matricial vertical equipado con el motor financiero. Organiza los módulos, visualiza costos y arrastra iniciativas comerciales a la realidad técnica.</p>
             </div>
 
@@ -288,7 +293,7 @@ const RoadmapView = ({ roadmap, addIdea, updateFeatureStatus, deleteFeature, add
                         {showAddVersion ? (
                             <div className="bg-carbon-light/40 backdrop-blur-sm border border-white/5 rounded-2xl p-6 shadow-xl space-y-5 flex flex-col mt-0 h-full">
                                 <h3 className="font-bold text-base font-sans uppercase tracking-widest text-white border-b border-white/10 pb-4 flex items-center gap-2">
-                                    <Plus size={18} className="text-accent-blue" /> Desplegar Bucket
+                                    <Plus size={18} className="text-accent-blue" /> Nueva Versión
                                 </h3>
                                 <div className="space-y-4">
                                     <div>
@@ -327,24 +332,24 @@ const RoadmapView = ({ roadmap, addIdea, updateFeatureStatus, deleteFeature, add
                                 </div>
                                 <div className="flex flex-col gap-3 mt-auto pt-6">
                                     <button onClick={handleAddVersion} className="w-full py-3.5 bg-accent-blue text-white rounded-lg font-bold text-xs uppercase tracking-widest hover:bg-accent-blue/80 transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] border border-accent-blue/50">
-                                        Crear Instancia
+                                        Crear Versión
                                     </button>
                                     <button onClick={() => setShowAddVersion(false)} className="w-full py-3 text-bone/50 font-bold text-xs uppercase tracking-widest hover:text-white hover:bg-white/5 rounded-lg border border-transparent transition-all">
-                                        Abortar
+                                        Cancelar
                                     </button>
                                 </div>
                             </div>
                         ) : (
                             <div
                                 onClick={() => setShowAddVersion(true)}
-                                className="bg-transparent border-2 border-dashed border-white/10 rounded-2xl flex-1 flex flex-col items-center justify-center gap-4 text-bone/30 hover:text-white hover:border-accent-blue/50 hover:bg-white/5 transition-all cursor-pointer group"
+                                className="bg-slate-200/50 border-2 border-dashed border-slate-300 rounded-2xl flex-1 flex flex-col items-center justify-center gap-4 text-slate-500 hover:text-slate-800 hover:border-accent-blue/50 transition-all cursor-pointer group"
                             >
-                                <div className="p-4 bg-white/5 rounded-full group-hover:bg-accent-blue/20 group-hover:scale-110 transition-all">
-                                    <Plus size={36} className="group-hover:text-accent-blue transition-colors" />
+                                <div className="p-4 bg-slate-100 rounded-full group-hover:bg-accent-blue/20 group-hover:scale-110 transition-all">
+                                    <Plus size={36} className="text-slate-400 group-hover:text-accent-blue transition-colors" />
                                 </div>
                                 <div className="text-center px-6">
-                                    <span className="block text-sm font-bold uppercase tracking-widest text-white mb-2">Instanciar Bucket</span>
-                                    <span className="text-xs">Extender ciclo de desarrollo agregando nuevas versiones al pipeline.</span>
+                                    <span className="block text-sm font-bold uppercase tracking-widest text-slate-700 mb-2">Nueva Versión</span>
+                                    <span className="text-xs text-slate-500">Extender ciclo de desarrollo agregando nuevas versiones al pipeline.</span>
                                 </div>
                             </div>
                         )}

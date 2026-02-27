@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { CalendarDays, ZoomIn, ZoomOut, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const GanttView = ({ roadmap, updateFeatureDates }) => {
-    const [zoomLevel, setZoomLevel] = useState(2); // 1=Months, 2=Weeks, 3=Days
+    const [zoomLevel, setZoomLevel] = useState(1); // 1=Months, 2=Weeks, 3=Days
     const ZOOM_LABELS = ['', 'Meses', 'Semanas', 'Días'];
     const DAY_WIDTHS = [0, 4, 12, 30]; // px per day at each zoom level
 
@@ -119,7 +119,7 @@ const GanttView = ({ roadmap, updateFeatureDates }) => {
             {/* Header */}
             <div className="max-w-screen-2xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-300 pb-8">
                 <div>
-                    <h1 className="text-4xl font-sans font-black tracking-tight mb-3 flex items-center gap-4 text-slate-900 drop-shadow-sm">
+                    <h1 className="text-4xl font-sans font-bold tracking-tight mb-3 flex items-center gap-4 text-slate-900 drop-shadow-sm">
                         <div className="p-3 bg-slate-900 rounded-xl border border-slate-700 shadow-xl">
                             <CalendarDays className="text-accent-blue" size={32} />
                         </div>
@@ -168,7 +168,7 @@ const GanttView = ({ roadmap, updateFeatureDates }) => {
                             {timeMarkers.map((marker, i) => (
                                 <div
                                     key={i}
-                                    className="absolute top-0 h-full border-l border-white/5 text-[10px] text-bone/40 font-bold px-2 py-3 uppercase tracking-wider"
+                                    className="absolute top-0 h-full border-l border-white/5 text-[10px] text-white font-bold px-2 py-3 uppercase tracking-wider"
                                     style={{ left: `${marker.offset * dayWidth}px` }}
                                 >
                                     {marker.label}
@@ -254,15 +254,15 @@ const GanttView = ({ roadmap, updateFeatureDates }) => {
             </div>
 
             {/* Legend */}
-            <div className="max-w-screen-2xl mx-auto mt-6 flex flex-wrap gap-6 text-[10px] text-bone/60 uppercase tracking-widest font-bold bg-carbon-light/30 p-4 rounded-xl border border-white/5 mb-8">
-                <div className="flex items-center gap-3 bg-black/20 px-3 py-1.5 rounded border border-white/5">
+            <div className="max-w-screen-2xl mx-auto mt-6 flex flex-wrap gap-6 text-[10px] text-slate-900 uppercase tracking-widest font-bold bg-slate-200/60 p-4 rounded-xl border border-slate-300 mb-8">
+                <div className="flex items-center gap-3 bg-white/60 px-3 py-1.5 rounded border border-slate-300">
                     <div className="w-5 h-0.5 bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
                     <span>Línea del Día de Hoy</span>
                 </div>
                 {roadmap.map(v => (
-                    <div key={v.id} className="flex items-center gap-3 bg-black/20 px-3 py-1.5 rounded border border-white/5">
+                    <div key={v.id} className="flex items-center gap-3 bg-white/60 px-3 py-1.5 rounded border border-slate-300">
                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: v.color, boxShadow: `0 0 8px ${v.color}80` }}></div>
-                        <span className="text-shadow">{v.name}</span>
+                        <span>{v.name}</span>
                     </div>
                 ))}
             </div>

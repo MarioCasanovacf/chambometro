@@ -153,7 +153,7 @@ const EisenhowerView = ({ roadmap, updateFeatureEisenhower }) => {
                 {/* Header */}
                 <div className="max-w-screen-2xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-300 pb-8">
                     <div>
-                        <h1 className="text-4xl font-sans font-black tracking-tight mb-4 flex items-center gap-4 text-slate-900 drop-shadow-sm">
+                        <h1 className="text-4xl font-sans font-bold tracking-tight mb-4 flex items-center gap-4 text-slate-900 drop-shadow-sm">
                             <div className="p-3 bg-slate-900 rounded-xl border border-slate-700 shadow-xl">
                                 <Target className="text-accent-emerald" size={32} />
                             </div>
@@ -180,21 +180,7 @@ const EisenhowerView = ({ roadmap, updateFeatureEisenhower }) => {
                     </div>
                 </div>
 
-                {/* Unclassified Pool */}
-                {unclassified.length > 0 && (
-                    <div className="max-w-screen-2xl mx-auto mb-8">
-                        <div className="bg-amber-900/10 border border-amber-500/20 p-5 rounded-2xl shadow-inner backdrop-blur-sm">
-                            <h3 className="text-xs font-bold uppercase tracking-widest text-amber-500 mb-5 flex items-center gap-2">
-                                <AlertTriangle size={16} /> Entidades Flotantes ({unclassified.length}) — Requieren clasificación táctica
-                            </h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                                {unclassified.map(f => (
-                                    <DraggableTaskCard key={f.id} feature={f} badgeColor="bg-amber-500/20 text-amber-500 border-amber-500/30" quadrantId={0} />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                )}
+                {/* Unclassified Pool - removed from here, moved below the grid */}
 
                 {/* Eisenhower Grid */}
                 <div className="max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 h-full lg:h-[calc(100vh-320px)]">
@@ -205,6 +191,30 @@ const EisenhowerView = ({ roadmap, updateFeatureEisenhower }) => {
                             features={getFeaturesByQuadrant(q.id)}
                         />
                     ))}
+                </div>
+
+                {/* Floating Entities - always visible, below the matrix */}
+                <div className="max-w-screen-2xl mx-auto mt-8">
+                    <div className={`${unclassified.length > 0 ? 'bg-amber-900/10 border-amber-500/20' : 'bg-emerald-900/10 border-emerald-500/20'} border p-5 rounded-2xl shadow-inner backdrop-blur-sm`}>
+                        <h3 className={`text-xs font-bold uppercase tracking-widest ${unclassified.length > 0 ? 'text-amber-500' : 'text-emerald-500'} mb-5 flex items-center gap-2`}>
+                            <AlertTriangle size={16} />
+                            {unclassified.length > 0
+                                ? `Entidades Flotantes (${unclassified.length}) — Requieren clasificación táctica`
+                                : 'Entidades Flotantes (0) — Todas las entidades han sido clasificadas'
+                            }
+                        </h3>
+                        {unclassified.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                {unclassified.map(f => (
+                                    <DraggableTaskCard key={f.id} feature={f} badgeColor="bg-amber-500/20 text-amber-500 border-amber-500/30" quadrantId={0} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-4 text-emerald-400 text-xs font-bold uppercase tracking-widest">
+                                ✓ Backlog limpio. Arrastre tarjetas aquí para desclasificarlas.
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* DragOverlay renders in a portal above everything */}

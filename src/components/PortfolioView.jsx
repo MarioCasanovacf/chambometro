@@ -57,7 +57,7 @@ const PortfolioView = ({ projects, selectProject, createProject, deleteProject, 
                 <div className="p-8 md:p-12">
                     <div className="mb-10 border-b border-slate-300 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                         <div>
-                            <h1 className="text-4xl font-sans font-black mb-3 tracking-tight text-slate-900">Portafolio de Proyectos</h1>
+                            <h1 className="text-4xl font-sans font-bold mb-3 tracking-tight text-slate-900">Portafolio de Proyectos</h1>
                             <p className="text-bone/60 text-lg">Visión global financiera y operativa ({projects.length} Proyectos Activos).</p>
                         </div>
                         {isAdmin && (
@@ -133,8 +133,8 @@ const PortfolioView = ({ projects, selectProject, createProject, deleteProject, 
                                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-accent-blue/20 transition-all">
                                     <Plus size={32} className="group-hover:text-accent-blue transition-colors" />
                                 </div>
-                                <h3 className="font-sans font-bold text-xl tracking-tight mb-2">Inicializar Nueva Visión</h3>
-                                <p className="text-sm text-center text-bone/40">Desplegar un nuevo entorno para un proyecto naciente.</p>
+                                <h3 className="font-sans font-bold text-xl tracking-tight mb-2">Nuevo Proyecto</h3>
+                                <p className="text-sm text-center text-bone/40">Crear un nuevo proyecto con su propia configuración.</p>
                             </div>
                         )}
                     </div>
@@ -145,7 +145,7 @@ const PortfolioView = ({ projects, selectProject, createProject, deleteProject, 
                             <div className="glass-panel rounded-2xl p-8 max-w-md w-full relative">
                                 <h2 className="text-2xl font-sans font-bold mb-3 text-white text-glow">Crear Nuevo Proyecto</h2>
                                 <p className="text-sm text-bone/60 mb-6 leading-relaxed">
-                                    El proyecto se inicializará con una versión v1.0 base y la configuración financiera clínica por defecto.
+                                    El proyecto se creará con una versión v1.0 base y la configuración financiera por defecto.
                                 </p>
 
                                 <div className="space-y-5">
@@ -166,13 +166,13 @@ const PortfolioView = ({ projects, selectProject, createProject, deleteProject, 
                                             onClick={handleCreate}
                                             className="flex-grow bg-accent-blue text-white py-3 rounded-lg font-semibold hover:bg-accent-blue/80 uppercase tracking-widest text-xs transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)]"
                                         >
-                                            Ejecutar
+                                            Crear Proyecto
                                         </button>
                                         <button
                                             onClick={() => setShowNewModal(false)}
                                             className="px-6 py-3 border border-white/10 rounded-lg text-bone/60 hover:bg-white/10 hover:text-white uppercase tracking-widest text-xs transition-all"
                                         >
-                                            Abortar
+                                            Cancelar
                                         </button>
                                     </div>
                                 </div>

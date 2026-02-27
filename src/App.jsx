@@ -48,8 +48,8 @@ function App() {
           color: "#0073ea",
           limit: 100,
           features: [
-            { id: 101, title: "Autenticación OAuth2", effortMin: 15, effortMax: 30, impact: 5, complexity: 6, category: "Tech", devStatus: "Terminado", startDate: "2023-10-01", endDate: "2023-10-15", assignee: "Jorge", eisenhower: 1 },
-            { id: 102, title: "Dashboard Principal", effortMin: 30, effortMax: 50, impact: 8, complexity: 3, category: "UI", devStatus: "Funcional", startDate: "2023-10-10", endDate: "2023-11-20", assignee: "Mario", eisenhower: 1 },
+            { id: 101, title: "Autenticación OAuth2", effortMin: 15, effortMax: 30, impact: 5, complexity: 6, category: "Tech", devStatus: "Done", startDate: "2023-10-01", endDate: "2023-10-15", assignee: "Jorge", eisenhower: 1 },
+            { id: 102, title: "Dashboard Principal", effortMin: 30, effortMax: 50, impact: 8, complexity: 3, category: "UI", devStatus: "Working on it", startDate: "2023-10-10", endDate: "2023-11-20", assignee: "Mario", eisenhower: 1 },
             { id: 103, title: "Integración de API Core", effortMin: 20, effortMax: 40, impact: 9, complexity: 8, category: "Backend", devStatus: "Design Phase", startDate: "2023-11-01", endDate: "2023-11-30", assignee: "Alberto", eisenhower: 2 }
           ]
         },
@@ -60,7 +60,7 @@ function App() {
           limit: 120,
           features: [
             { id: 201, title: "Analítica Avanzada", effortMin: 40, effortMax: 60, impact: 9, complexity: 7, category: "Business", devStatus: "Prototype", startDate: "2023-12-01", endDate: "2024-01-30", assignee: "Andrea", eisenhower: 2 },
-            { id: 202, title: "Notificaciones Push", effortMin: 20, effortMax: 35, impact: 4, complexity: 5, category: "UX", devStatus: "No Empezado", startDate: "2024-01-15", endDate: "2024-02-15", assignee: "Fabián", eisenhower: null }
+            { id: 202, title: "Notificaciones Push", effortMin: 20, effortMax: 35, impact: 4, complexity: 5, category: "UX", devStatus: "Not Started", startDate: "2024-01-15", endDate: "2024-02-15", assignee: "Fabián", eisenhower: null }
           ]
         },
         {
@@ -69,8 +69,8 @@ function App() {
           color: "#00c875",
           limit: 150,
           features: [
-            { id: 301, title: "Motor de IA Predictiva", effortMin: 80, effortMax: 120, impact: 10, complexity: 10, category: "Vision", devStatus: "No Empezado", startDate: "2024-03-01", endDate: "2024-06-30", assignee: "Daniel", eisenhower: null },
-            { id: 302, title: "Multi-idioma (Mercado Asia)", effortMin: 50, effortMax: 80, impact: 10, complexity: 6, category: "Global", devStatus: "No Empezado", startDate: "2024-05-01", endDate: "2024-07-30", assignee: "Jorge", eisenhower: 3 }
+            { id: 301, title: "Motor de IA Predictiva", effortMin: 80, effortMax: 120, impact: 10, complexity: 10, category: "Vision", devStatus: "Not Started", startDate: "2024-03-01", endDate: "2024-06-30", assignee: "Daniel", eisenhower: null },
+            { id: 302, title: "Multi-idioma (Mercado Asia)", effortMin: 50, effortMax: 80, impact: 10, complexity: 6, category: "Global", devStatus: "Not Started", startDate: "2024-05-01", endDate: "2024-07-30", assignee: "Jorge", eisenhower: 3 }
           ]
         }
       ]
