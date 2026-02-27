@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Target, Zap, LayoutGrid, DollarSign } from 'lucide-react';
 
-const KANBAN_STAGES = ["No Empezado", "Prototipo", "Diseño", "Funcional", "Terminado"];
+const KANBAN_STAGES = ["Not Started", "Design Phase", "Prototype", "Working on it", "Stuck", "Done", "Obsoleta"];
 
-const STAGE_COLORS = {
-    "No Empezado": "border-t-stone text-stone",
-    "Prototipo": "border-t-indigo-500 text-indigo-700",
-    "Diseño": "border-t-blue-500 text-blue-700",
-    "Funcional": "border-t-orange-500 text-orange-700",
-    "Terminado": "border-t-[#00c875] text-[#00c875]"
+const STAGE_STYLES = {
+    "Not Started": { border: "from-white/20 to-white/5", text: "text-white/70" },
+    "Design Phase": { border: "from-[#579bfc] to-blue-900", text: "text-[#579bfc]" },
+    "Prototype": { border: "from-[#a25ddc] to-purple-900", text: "text-[#a25ddc]" },
+    "Working on it": { border: "from-[#fdab3d] to-orange-900", text: "text-[#fdab3d]" },
+    "Stuck": { border: "from-[#e2445c] to-red-900", text: "text-[#e2445c]" },
+    "Done": { border: "from-[#00c875] to-emerald-900", text: "text-[#00c875]" },
+    "Obsoleta": { border: "from-white/20 to-transparent", text: "text-white/40 line-through" }
 };
 
 const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
@@ -23,9 +25,8 @@ const calculateFinancials = (effortMin, effortMax, impact, complexity, settings)
 const KanbanView = ({ roadmap, updateFeatureStatus, settings }) => {
     const [draggedItem, setDraggedItem] = useState(null);
 
-    // Flatten all features from the roadmap versions
-    const allFeatures = roadmap.reduce((acc, column) => {
-        const enrichedFeatures = column.features.map(f => ({ ...f, vIdx: roadmap.indexOf(column) }));
+    const allFeatures = roadmap.reduce((acc, column, vIdx) => {
+        const enrichedFeatures = column.features.map(f => ({ ...f, vIdx }));
         return [...acc, ...enrichedFeatures];
     }, []);
 
@@ -50,34 +51,41 @@ const KanbanView = ({ roadmap, updateFeatureStatus, settings }) => {
     };
 
     return (
-        <div className="bg-bone text-carbon p-4 md:p-8 min-h-full font-sans">
-            <div className="max-w-[1400px] mx-auto mb-10 border-b border-stone-light pb-6">
-                <h1 className="text-4xl font-serif font-bold tracking-tight mb-2">Kanban de Ejecución Operativa</h1>
-                <p className="text-stone text-lg max-w-2xl">
-                    Flujo de trabajo diario para el equipo técnico. Arrastre las tarjetas entre las fases para actualizar el progreso general del proyecto.
-                </p>
+        <div className="bg-transparent p-6 md:p-10 min-h-[85vh] font-sans">
+            <div className="max-w-screen-2xl mx-auto mb-10 border-b border-slate-300 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div>
+                    <h1 className="text-4xl font-sans font-black tracking-tight mb-3 text-slate-900 drop-shadow-sm">Kanban Táctico</h1>
+                    <p className="text-slate-700 font-medium text-lg max-w-2xl leading-relaxed">
+                        Flujo de trabajo ágil para el equipo técnico. Arrastre las tarjetas entre las fases para actualizar el progreso general y la visibilidad a ejecutivos.
+                    </p>
+                </div>
             </div>
 
-            <div className="flex gap-6 overflow-x-auto pb-4 max-w-[1400px] mx-auto snap-x">
+            <div className="max-w-screen-2xl mx-auto flex gap-6 overflow-x-auto pb-8 snap-x custom-scrollbar">
                 {KANBAN_STAGES.map((stage) => {
                     const features = getFeaturesByStatus(stage);
+                    const style = STAGE_STYLES[stage] || STAGE_STYLES["Not Started"];
+
                     return (
                         <div
                             key={stage}
                             onDragOver={handleDragOver}
                             onDrop={(e) => handleDrop(e, stage)}
-                            className="bg-bone-alt border border-stone-light shadow-sm flex flex-col min-w-[320px] max-w-[350px] flex-shrink-0 snap-start h-[calc(100vh-280px)]"
+                            className="bg-carbon-light border border-white/8 rounded-2xl flex flex-col min-w-[320px] max-w-[360px] flex-shrink-0 snap-start h-[calc(100vh-220px)] shadow-xl relative overflow-hidden group transition-all"
                         >
+                            {/* Accent Top Sub-line */}
+                            <div className={`absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r ${style.border} opacity-90`}></div>
+
                             {/* Column Header */}
-                            <div className={`p-4 bg-bone border-b border-stone-light border-t-4 ${STAGE_COLORS[stage].split(' ')[0]}`}>
-                                <div className="flex justify-between items-center">
-                                    <h2 className={`font-bold uppercase tracking-widest text-sm ${STAGE_COLORS[stage].split(' ')[1]}`}>{stage}</h2>
-                                    <span className="text-xs font-bold bg-bone-alt text-stone px-2 py-1 border border-stone-light">{features.length}</span>
-                                </div>
+                            <div className="p-5 bg-carbon-raised/40 border-b border-white/8 relative flex justify-between items-center">
+                                <h2 className={`font-bold uppercase tracking-widest text-sm text-shadow ${style.text}`}>{stage}</h2>
+                                <span className="text-xs font-bold bg-white/10 border border-white/10 text-white rounded-md px-2.5 py-1">
+                                    {features.length}
+                                </span>
                             </div>
 
                             {/* Cards Container */}
-                            <div className="flex-1 p-3 space-y-3 overflow-y-auto bg-stone-100/30">
+                            <div className="flex-1 p-4 space-y-4 overflow-y-auto custom-scrollbar bg-transparent">
                                 {features.map(feature => {
                                     const { OPEX_MIN, OPEX_MAX, COGS } = calculateFinancials(feature.effortMin, feature.effortMax, feature.impact, feature.complexity, settings);
 
@@ -86,47 +94,53 @@ const KanbanView = ({ roadmap, updateFeatureStatus, settings }) => {
                                             key={feature.id}
                                             draggable
                                             onDragStart={(e) => handleDragStart(e, feature.id, feature.vIdx)}
-                                            className="bg-white p-4 border border-stone-light shadow-sm cursor-grab active:cursor-grabbing hover:border-carbon transition-colors group relative"
+                                            className={`bg-carbon-surface border border-white/8 rounded-xl p-5 shadow-lg cursor-grab active:cursor-grabbing hover:border-white/20 transition-all group relative hover:-translate-y-1 hover:shadow-xl flex flex-col ${stage === 'Obsoleta' ? 'opacity-50 grayscale' : ''}`}
                                         >
-                                            <div className="flex justify-between items-start mb-2">
-                                                <span className="text-[10px] text-stone font-bold uppercase tracking-wider bg-bone px-2 py-1">
+                                            <div className="flex justify-between items-start mb-3">
+                                                <span className="text-[9px] text-bone/50 font-bold uppercase tracking-widest bg-white/5 border border-white/5 px-2 py-1 rounded-md">
                                                     {feature.category}
                                                 </span>
                                             </div>
-                                            <h3 className="font-bold text-sm text-carbon leading-snug">{feature.title}</h3>
+                                            <h3 className="font-bold text-sm text-white leading-snug mb-4">{feature.title}</h3>
 
-                                            <div className="mt-4 grid grid-cols-2 gap-y-3 text-xs border-t border-stone-light/50 pt-3">
-                                                <div className="flex flex-col gap-1 text-stone" title="Rango de Esfuerzo">
-                                                    <span className="uppercase text-[9px] font-bold tracking-wider">Esfuerzo</span>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <Zap size={14} className="text-stone" />
-                                                        <span className="font-semibold text-carbon">{feature.effortMin}-{feature.effortMax} d</span>
+                                            <div className="grid grid-cols-2 gap-3 text-[10px] mt-auto">
+                                                <div className="bg-white/5 border border-white/5 rounded-lg p-2.5 flex flex-col gap-1 group-hover:bg-white/10 transition-colors" title="Esfuerzo Orgánico en Días">
+                                                    <span className="uppercase text-[8px] font-bold tracking-widest text-bone/40">Esfuerzo</span>
+                                                    <div className="flex items-center gap-1.5 text-white">
+                                                        <Zap size={11} className="text-amber-400/80" />
+                                                        <span className="font-mono font-semibold">{feature.effortMin}-{feature.effortMax}</span>
                                                     </div>
                                                 </div>
-                                                <div className="flex flex-col gap-1 text-stone items-end" title="Valor / Compl.">
-                                                    <span className="uppercase text-[9px] font-bold tracking-wider">Impacto/Comp</span>
-                                                    <div className="flex items-center gap-1.5 ">
-                                                        <Target size={14} className="text-stone" />
-                                                        <span className="font-semibold text-carbon">{feature.impact}</span> / <span className="font-semibold text-stone">{feature.complexity}</span>
+                                                <div className="bg-white/5 border border-white/5 rounded-lg p-2.5 flex flex-col gap-1 group-hover:bg-white/10 transition-colors" title="Valor Comercial / Complejidad Técnica">
+                                                    <span className="uppercase text-[8px] font-bold tracking-widest text-bone/40">Ret/Deuda</span>
+                                                    <div className="flex items-center gap-1.5 text-white">
+                                                        <Target size={11} className="text-accent-blue/80" />
+                                                        <span><span className="font-mono font-bold">{feature.impact}</span>/<span className="font-mono text-bone/50 font-bold">{feature.complexity}</span></span>
                                                     </div>
                                                 </div>
-                                                <div className="flex flex-col gap-1 text-stone" title="OPEX Rango">
-                                                    <div className="flex items-center gap-1">
-                                                        <span className="uppercase text-[9px] font-bold tracking-wider text-red-600">OPEX</span>
+                                                <div className="bg-white/5 border border-white/5 rounded-lg p-2.5 flex flex-col gap-1 group-hover:bg-white/10 transition-colors" title="Estimación Rango OPEX">
+                                                    <span className="uppercase text-[8px] font-bold tracking-widest text-bone/40 text-accent-emerald">OPEX Est.</span>
+                                                    <div className="flex items-center gap-1 text-accent-emerald">
+                                                        <DollarSign size={11} />
+                                                        <span className="font-mono font-bold text-[10px]">{formatCurrency(OPEX_MIN)}</span>
                                                     </div>
-                                                    <span className="font-mono font-bold text-red-600 text-[10px]">{formatCurrency(OPEX_MIN)} - {formatCurrency(OPEX_MAX)}</span>
                                                 </div>
-                                                <div className="flex flex-col gap-1 text-stone items-end" title="COGS Mensual">
-                                                    <span className="uppercase text-[9px] font-bold tracking-wider text-indigo-600">COGS/mo</span>
-                                                    <span className="font-mono font-bold text-indigo-600">{formatCurrency(COGS)}</span>
+                                                <div className="bg-white/5 border border-white/5 rounded-lg p-2.5 flex flex-col gap-1 group-hover:bg-white/10 transition-colors" title="Estimación COGS Mensual">
+                                                    <span className="uppercase text-[8px] font-bold tracking-widest text-bone/40 text-accent-purple">COGS / mo</span>
+                                                    <div className="flex items-center gap-1 text-accent-purple">
+                                                        <LayoutGrid size={11} />
+                                                        <span className="font-mono font-bold text-[10px]">{formatCurrency(COGS)}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     );
                                 })}
                                 {features.length === 0 && (
-                                    <div className="h-full flex items-center justify-center p-6 text-center border-2 border-dashed border-stone-light text-stone text-sm">
-                                        Arrastre tarjetas aquí
+                                    <div className="h-full flex items-center justify-center p-6 text-center border-2 border-dashed border-white/10 rounded-xl text-bone/30 text-xs font-bold uppercase tracking-widest hover:bg-white/5 hover:border-white/20 transition-all group min-h-[150px]">
+                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity -translate-y-2 group-hover:translate-y-0 text-white">
+                                            Soltar Entrada Aquí
+                                        </div>
                                     </div>
                                 )}
                             </div>
