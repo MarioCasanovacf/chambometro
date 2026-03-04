@@ -1,4 +1,7 @@
 {
+    "firestore": {
+        "rules": "firestore.rules"
+    },
     "hosting": {
         "site": "chambometro-capataz-3000",
         "public": "dist",

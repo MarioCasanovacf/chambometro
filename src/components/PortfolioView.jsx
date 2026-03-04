@@ -48,7 +48,7 @@ const PortfolioView = ({ projects, selectProject, createProject, deleteProject, 
 
                 <button
                     onClick={closePortfolio}
-                    className="absolute top-6 right-6 text-bone/50 hover:text-white transition-all bg-white/5 hover:bg-white/10 p-2 rounded-lg"
+                    className="absolute top-6 right-6 text-slate-500 hover:text-slate-900 transition-all bg-slate-200/50 hover:bg-slate-200 p-2 rounded-lg font-semibold"
                     title="Cerrar Portafolio"
                 >
                     &times; Cerrar
@@ -58,7 +58,7 @@ const PortfolioView = ({ projects, selectProject, createProject, deleteProject, 
                     <div className="mb-10 border-b border-slate-300 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                         <div>
                             <h1 className="text-4xl font-sans font-bold mb-3 tracking-tight text-slate-900">Portafolio de Proyectos</h1>
-                            <p className="text-bone/60 text-lg">Visión global financiera y operativa ({projects.length} Proyectos Activos).</p>
+                            <p className="text-slate-500 text-lg">Visión global financiera y operativa ({projects.length} Proyectos Activos).</p>
                         </div>
                         {isAdmin && (
                             <button
@@ -75,18 +75,18 @@ const PortfolioView = ({ projects, selectProject, createProject, deleteProject, 
                             const stats = calculateProjectStats(project);
 
                             return (
-                                <div key={project.id} className="glass-panel rounded-xl group hover:border-accent-blue/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all flex flex-col overflow-hidden">
-                                    <div className="p-6 border-b border-white/5 flex justify-between items-start bg-white/5">
+                                <div key={project.id} className="bg-white border border-slate-200 rounded-xl group hover:border-accent-blue/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all flex flex-col overflow-hidden shadow-sm">
+                                    <div className="p-6 border-b border-slate-100 flex justify-between items-start bg-slate-50">
                                         <div className="flex-1">
-                                            <h2 className="text-xl font-bold font-sans text-white mb-2">{project.name}</h2>
-                                            <div className="flex items-center gap-2 text-xs text-bone/50 uppercase tracking-widest font-semibold">
-                                                <FolderOpen size={14} className="text-accent-blue" /> {project.roadmap.length} Versiones <span className="text-white/20">•</span> {stats.totalFeatures} Features
+                                            <h2 className="text-xl font-bold font-sans text-slate-900 mb-2">{project.name}</h2>
+                                            <div className="flex items-center gap-2 text-xs text-slate-500 uppercase tracking-widest font-semibold">
+                                                <FolderOpen size={14} className="text-accent-blue" /> {project.roadmap.length} Versiones <span className="text-slate-300">•</span> {stats.totalFeatures} Features
                                             </div>
                                         </div>
                                         {isAdmin && (
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); deleteProject(project.id); }}
-                                                className="text-bone/30 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-md hover:bg-white/5"
+                                                className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-md hover:bg-red-50"
                                                 title="Eliminar Proyecto"
                                             >
                                                 <Trash2 size={18} />
@@ -96,27 +96,27 @@ const PortfolioView = ({ projects, selectProject, createProject, deleteProject, 
 
                                     <div className="p-6 space-y-6 flex-1">
                                         <div className="grid grid-cols-2 gap-4">
-                                            <div className="bg-carbon rounded-lg p-3 border border-white/5">
-                                                <p className="text-[10px] text-bone/40 uppercase font-bold tracking-widest mb-1">OPEX Rango</p>
-                                                <p className="text-lg font-mono text-accent-emerald font-bold">{formatCurrency(stats.totalOpexMin)}</p>
-                                                <p className="text-xs font-mono text-bone/50">a {formatCurrency(stats.totalOpexMax)}</p>
+                                            <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                                                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">OPEX Rango</p>
+                                                <p className="text-lg font-mono text-emerald-600 font-bold">{formatCurrency(stats.totalOpexMin)}</p>
+                                                <p className="text-xs font-mono text-slate-500">a {formatCurrency(stats.totalOpexMax)}</p>
                                             </div>
-                                            <div className="bg-carbon rounded-lg p-3 border border-white/5">
-                                                <p className="text-[10px] text-bone/40 uppercase font-bold tracking-widest mb-1">Total COGS (Mo)</p>
-                                                <p className="text-lg font-mono text-accent-purple font-bold mt-1">{formatCurrency(stats.totalCogs)}</p>
+                                            <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                                                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Total COGS (Mo)</p>
+                                                <p className="text-lg font-mono text-purple-600 font-bold mt-1">{formatCurrency(stats.totalCogs)}</p>
                                             </div>
                                         </div>
 
-                                        <div className="bg-carbon rounded-lg p-3 border border-white/5">
-                                            <p className="text-[10px] text-bone/40 uppercase font-bold tracking-widest mb-1">Esfuerzo Técnico Global</p>
-                                            <p className="text-lg font-bold text-bone">{stats.totalEffortMin}-{stats.totalEffortMax} <span className="text-xs font-semibold text-bone/40 uppercase ml-1 tracking-wider">Días</span></p>
+                                        <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                                            <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Esfuerzo Técnico Global</p>
+                                            <p className="text-lg font-bold text-slate-800">{stats.totalEffortMin}-{stats.totalEffortMax} <span className="text-xs font-semibold text-slate-400 uppercase ml-1 tracking-wider">Días</span></p>
                                         </div>
                                     </div>
 
-                                    <div className="p-4 border-t border-white/5">
+                                    <div className="p-4 border-t border-slate-100">
                                         <button
                                             onClick={() => selectProject(project.id)}
-                                            className="w-full py-3 bg-white/5 text-bone/80 font-semibold uppercase tracking-widest text-xs hover:bg-white/10 hover:text-white rounded-lg transition-all border border-transparent hover:border-white/10"
+                                            className="w-full py-3 bg-slate-100 text-slate-700 font-semibold uppercase tracking-widest text-xs hover:bg-accent-blue hover:text-white rounded-lg transition-all border border-slate-200 hover:border-accent-blue"
                                         >
                                             Abrir Proyecto
                                         </button>
@@ -128,13 +128,13 @@ const PortfolioView = ({ projects, selectProject, createProject, deleteProject, 
                         {isAdmin && (
                             <div
                                 onClick={() => setShowNewModal(true)}
-                                className="rounded-xl border border-dashed border-white/20 bg-white/5 hover:bg-white/10 hover:border-accent-blue/50 flex flex-col items-center justify-center p-8 text-bone/50 hover:text-white transition-all cursor-pointer min-h-[350px] group"
+                                className="rounded-xl border border-dashed border-slate-300 bg-white hover:bg-slate-50 hover:border-accent-blue/50 flex flex-col items-center justify-center p-8 text-slate-400 hover:text-slate-700 transition-all cursor-pointer min-h-[350px] group shadow-sm"
                             >
-                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-accent-blue/20 transition-all">
+                                <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-accent-blue/20 transition-all">
                                     <Plus size={32} className="group-hover:text-accent-blue transition-colors" />
                                 </div>
-                                <h3 className="font-sans font-bold text-xl tracking-tight mb-2">Nuevo Proyecto</h3>
-                                <p className="text-sm text-center text-bone/40">Crear un nuevo proyecto con su propia configuración.</p>
+                                <h3 className="font-sans font-bold text-xl tracking-tight mb-2 text-slate-700">Nuevo Proyecto</h3>
+                                <p className="text-sm text-center text-slate-400">Crear un nuevo proyecto con su propia configuración.</p>
                             </div>
                         )}
                     </div>
