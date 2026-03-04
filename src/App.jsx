@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MatrixView from './components/MatrixView';
 import RoadmapView from './components/RoadmapView';
 import PortfolioView from './components/PortfolioView';
@@ -6,13 +6,21 @@ import SettingsView from './components/SettingsView';
 import KanbanView from './components/KanbanView';
 import GanttView from './components/GanttView';
 import EisenhowerView from './components/EisenhowerView';
-import { Settings, Briefcase, UserCog, LayoutGrid, Map, Columns3, CalendarDays, Target } from 'lucide-react';
+import LoginScreen from './components/LoginScreen';
+import { Settings, Briefcase, UserCog, LayoutGrid, Map, Columns3, CalendarDays, Target, Loader2, LogOut } from 'lucide-react';
+import { db, auth } from './lib/firebase';
+import { collection, getDocs, doc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 function App() {
   const [currentView, setCurrentView] = useState('roadmap');
-  const [selectedProjectId, setSelectedProjectId] = useState(1);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [showPortfolio, setShowPortfolio] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState([]);
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   const defaultSettings = {
     opexCategories: [
@@ -26,56 +34,56 @@ function App() {
     cogsMultiplier: 1.5,
   };
 
-  const [projects, setProjects] = useState([
-    {
-      id: 1,
-      name: "App Móvil Core",
-      settings: {
-        opexCategories: [
-          { id: 1, name: 'Salarios Dev Senior', amount: 500 },
-          { id: 2, name: 'Salarios Dev Junior', amount: 250 },
-        ],
-        cogsCategories: [
-          { id: 1, name: 'Servidores Cloud', amount: 100 },
-          { id: 2, name: 'APIs Externas', amount: 50 },
-        ],
-        cogsMultiplier: 1.5,
-      },
-      roadmap: [
-        {
-          id: 1,
-          name: "v1.0: Foundation (MVP)",
-          color: "#0073ea",
-          limit: 100,
-          features: [
-            { id: 101, title: "Autenticación OAuth2", effortMin: 15, effortMax: 30, impact: 5, complexity: 6, category: "Tech", devStatus: "Done", startDate: "2023-10-01", endDate: "2023-10-15", assignee: "Jorge", eisenhower: 1 },
-            { id: 102, title: "Dashboard Principal", effortMin: 30, effortMax: 50, impact: 8, complexity: 3, category: "UI", devStatus: "Working on it", startDate: "2023-10-10", endDate: "2023-11-20", assignee: "Mario", eisenhower: 1 },
-            { id: 103, title: "Integración de API Core", effortMin: 20, effortMax: 40, impact: 9, complexity: 8, category: "Backend", devStatus: "Design Phase", startDate: "2023-11-01", endDate: "2023-11-30", assignee: "Alberto", eisenhower: 2 }
-          ]
-        },
-        {
-          id: 2,
-          name: "v1.5: Optimization",
-          color: "#a25ddc",
-          limit: 120,
-          features: [
-            { id: 201, title: "Analítica Avanzada", effortMin: 40, effortMax: 60, impact: 9, complexity: 7, category: "Business", devStatus: "Prototype", startDate: "2023-12-01", endDate: "2024-01-30", assignee: "Andrea", eisenhower: 2 },
-            { id: 202, title: "Notificaciones Push", effortMin: 20, effortMax: 35, impact: 4, complexity: 5, category: "UX", devStatus: "Not Started", startDate: "2024-01-15", endDate: "2024-02-15", assignee: "Fabián", eisenhower: null }
-          ]
-        },
-        {
-          id: 3,
-          name: "v2.0: Scaling & Vision",
-          color: "#00c875",
-          limit: 150,
-          features: [
-            { id: 301, title: "Motor de IA Predictiva", effortMin: 80, effortMax: 120, impact: 10, complexity: 10, category: "Vision", devStatus: "Not Started", startDate: "2024-03-01", endDate: "2024-06-30", assignee: "Daniel", eisenhower: null },
-            { id: 302, title: "Multi-idioma (Mercado Asia)", effortMin: 50, effortMax: 80, impact: 10, complexity: 6, category: "Global", devStatus: "Not Started", startDate: "2024-05-01", endDate: "2024-07-30", assignee: "Jorge", eisenhower: 3 }
-          ]
-        }
-      ]
+
+
+  // --- Auth & Firestore Real-time Sync ---
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
+      if (!currentUser) {
+        setLoading(false); // Stop loading if no user
+      }
+    });
+
+    return () => unsubscribeAuth();
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setProjects([]);
+      return;
     }
-  ]);
+
+    setLoading(true);
+    const unsubscribeDb = onSnapshot(collection(db, 'projects'), (snapshot) => {
+      const projectsData = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id === '1' ? 1 : doc.id // Handle the initial numeric ID if it exists
+      }));
+
+      setProjects(projectsData);
+      setLoading(false);
+
+      // Select first project if none selected
+      if (projectsData.length > 0 && !selectedProjectId) {
+        setSelectedProjectId(projectsData[0].id);
+      }
+    }, (error) => {
+      console.error("Firestore error:", error);
+      setLoading(false);
+    });
+
+    return () => unsubscribeDb();
+  }, [user, selectedProjectId]); // Re-run if user changes or selectedProjectId changes initial set
+
+  const saveProjectToFirestore = async (project) => {
+    try {
+      await setDoc(doc(db, 'projects', String(project.id)), project);
+    } catch (error) {
+      console.error("Error saving project: ", error);
+    }
+  };
 
   const activeProject = projects.find(p => p.id === selectedProjectId);
 
@@ -91,21 +99,24 @@ function App() {
   // --- Project CRUD ---
   const createProject = (name) => {
     const newProject = {
-      id: Date.now(),
+      id: String(Date.now()), // Use string IDs for Firestore consistency
       name: name,
       settings: JSON.parse(JSON.stringify(defaultSettings)),
       roadmap: [
         { id: Date.now() + 1, name: "v1.0: Foundation", color: "#0073ea", limit: 100, features: [] },
       ]
     };
-    setProjects([...projects, newProject]);
+    saveProjectToFirestore(newProject);
   };
 
-  const deleteProject = (id) => {
-    setProjects(projects.filter(p => p.id !== id));
-    if (selectedProjectId === id) {
-      const remaining = projects.filter(p => p.id !== id);
-      setSelectedProjectId(remaining.length > 0 ? remaining[0].id : null);
+  const deleteProject = async (id) => {
+    try {
+      await deleteDoc(doc(db, 'projects', String(id)));
+      if (selectedProjectId === id) {
+        setSelectedProjectId(null);
+      }
+    } catch (error) {
+      console.error("Error deleting project: ", error);
     }
   };
 
@@ -133,15 +144,15 @@ function App() {
 
   // --- Core state updaters ---
   const updateActiveProjectRoadmap = (newRoadmap) => {
-    setProjects(projects.map(p =>
-      p.id === selectedProjectId ? { ...p, roadmap: newRoadmap } : p
-    ));
+    if (!activeProject) return;
+    const updatedProject = { ...activeProject, roadmap: newRoadmap };
+    saveProjectToFirestore(updatedProject);
   };
 
   const updateActiveProjectSettings = (newSettings) => {
-    setProjects(projects.map(p =>
-      p.id === selectedProjectId ? { ...p, settings: newSettings } : p
-    ));
+    if (!activeProject) return;
+    const updatedProject = { ...activeProject, settings: newSettings };
+    saveProjectToFirestore(updatedProject);
   };
 
   // --- Feature operations ---
@@ -226,6 +237,35 @@ function App() {
       cogsCategories: activeProject.settings.cogsCategories,
     };
   };
+
+  const handleSignOut = () => {
+    signOut(auth);
+  };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[var(--color-page-bg)] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 text-accent-blue animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginScreen />;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[var(--color-page-bg)] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 text-accent-blue animate-spin" />
+          <p className="text-bone/60 font-medium tracking-widest uppercase text-xs">Cargando Tablero...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[var(--color-page-bg)] text-[var(--color-page-text)] font-sans flex flex-col selection:bg-accent-blue/30 relative overflow-hidden">
@@ -321,6 +361,14 @@ function App() {
               <Settings size={16} /> <span className="hidden md:inline">Parámetros</span>
             </button>
           )}
+
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all text-bone/40 hover:text-red-400 hover:bg-red-400/10 border border-transparent"
+            title="Cerrar Sesión"
+          >
+            <LogOut size={16} />
+          </button>
         </div>
       </nav>
 
