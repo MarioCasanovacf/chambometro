@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import MatrixView from './components/MatrixView';
-import RoadmapView from './components/RoadmapView';
-import PortfolioView from './components/PortfolioView';
-import SettingsView from './components/SettingsView';
-import KanbanView from './components/KanbanView';
-import GanttView from './components/GanttView';
-import EisenhowerView from './components/EisenhowerView';
+import React, { useState, useEffect, Suspense } from 'react';
 import LoginScreen from './components/LoginScreen';
 import { Settings, Briefcase, UserCog, LayoutGrid, Map, Columns3, CalendarDays, Target, Loader2, LogOut } from 'lucide-react';
 import { db, auth } from './lib/firebase';
 import { collection, getDocs, doc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+
+// Lazy-load heavy view components for code splitting
+const MatrixView = React.lazy(() => import('./components/MatrixView'));
+const RoadmapView = React.lazy(() => import('./components/RoadmapView'));
+const PortfolioView = React.lazy(() => import('./components/PortfolioView'));
+const SettingsView = React.lazy(() => import('./components/SettingsView'));
+const KanbanView = React.lazy(() => import('./components/KanbanView'));
+const GanttView = React.lazy(() => import('./components/GanttView'));
+const EisenhowerView = React.lazy(() => import('./components/EisenhowerView'));
 
 function App() {
   const [currentView, setCurrentView] = useState('roadmap');
@@ -65,17 +67,20 @@ function App() {
       setProjects(projectsData);
       setLoading(false);
 
-      // Select first project if none selected
-      if (projectsData.length > 0 && !selectedProjectId) {
-        setSelectedProjectId(projectsData[0].id);
-      }
+      // Select first project if none selected (functional updater avoids stale closure)
+      setSelectedProjectId((prev) => {
+        if (prev === null && projectsData.length > 0) {
+          return projectsData[0].id;
+        }
+        return prev;
+      });
     }, (error) => {
       console.error("Firestore error:", error);
       setLoading(false);
     });
 
     return () => unsubscribeDb();
-  }, [user, selectedProjectId]); // Re-run if user changes or selectedProjectId changes initial set
+  }, [user]); // Only re-subscribe when user changes — NOT selectedProjectId
 
   const saveProjectToFirestore = async (project) => {
     try {
@@ -373,84 +378,90 @@ function App() {
       </nav>
 
       <main className="pb-12 h-full">
-        {/* Project Breadcrumb / Back Navigation */}
-        {selectedProjectId && currentView !== 'settings' && (
-          <div className="bg-slate-300/50 border-b border-slate-400/30 px-8 flex items-center gap-3 relative h-1 backdrop-blur-sm">
-            {/* Elegant thin indicator line */}
-            <div className="h-0.5 w-full bg-gradient-to-r from-accent-blue via-accent-purple to-transparent absolute top-0 left-0 opacity-70"></div>
+        <Suspense fallback={
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <Loader2 className="w-10 h-10 text-accent-blue animate-spin" />
           </div>
-        )}
+        }>
+          {/* Project Breadcrumb / Back Navigation */}
+          {selectedProjectId && currentView !== 'settings' && (
+            <div className="bg-slate-300/50 border-b border-slate-400/30 px-8 flex items-center gap-3 relative h-1 backdrop-blur-sm">
+              {/* Elegant thin indicator line */}
+              <div className="h-0.5 w-full bg-gradient-to-r from-accent-blue via-accent-purple to-transparent absolute top-0 left-0 opacity-70"></div>
+            </div>
+          )}
 
-        {/* Floating Portfolio Overlay */}
-        {showPortfolio && (
-          <PortfolioView
-            projects={projects}
-            selectProject={(id) => {
-              setSelectedProjectId(id);
-              setShowPortfolio(false);
-              if (currentView === 'settings') setCurrentView('roadmap');
-            }}
-            closePortfolio={() => setShowPortfolio(false)}
-            createProject={createProject}
-            deleteProject={deleteProject}
-            isAdmin={isAdmin}
-          />
-        )}
+          {/* Floating Portfolio Overlay */}
+          {showPortfolio && (
+            <PortfolioView
+              projects={projects}
+              selectProject={(id) => {
+                setSelectedProjectId(id);
+                setShowPortfolio(false);
+                if (currentView === 'settings') setCurrentView('roadmap');
+              }}
+              closePortfolio={() => setShowPortfolio(false)}
+              createProject={createProject}
+              deleteProject={deleteProject}
+              isAdmin={isAdmin}
+            />
+          )}
 
-        {currentView === 'settings' && activeProject && (
-          <SettingsView
-            activeProject={activeProject}
-            updateSettings={updateActiveProjectSettings}
-            isAdmin={isAdmin}
-          />
-        )}
+          {currentView === 'settings' && activeProject && (
+            <SettingsView
+              activeProject={activeProject}
+              updateSettings={updateActiveProjectSettings}
+              isAdmin={isAdmin}
+            />
+          )}
 
-        {currentView === 'matrix' && activeProject && (
-          <MatrixView
-            roadmap={activeProject.roadmap}
-            moveFeature={moveFeature}
-            addIdea={addIdea}
-            deleteFeature={deleteFeature}
-            settings={getComputedSettings()}
-            isAdmin={isAdmin}
-          />
-        )}
+          {currentView === 'matrix' && activeProject && (
+            <MatrixView
+              roadmap={activeProject.roadmap}
+              moveFeature={moveFeature}
+              addIdea={addIdea}
+              deleteFeature={deleteFeature}
+              settings={getComputedSettings()}
+              isAdmin={isAdmin}
+            />
+          )}
 
-        {currentView === 'roadmap' && activeProject && (
-          <RoadmapView
-            roadmap={activeProject.roadmap}
-            addIdea={addIdea}
-            updateFeatureStatus={updateFeatureStatus}
-            deleteFeature={deleteFeature}
-            addVersion={addVersion}
-            editVersion={editVersion}
-            deleteVersion={deleteVersion}
-            settings={getComputedSettings()}
-            isAdmin={isAdmin}
-          />
-        )}
+          {currentView === 'roadmap' && activeProject && (
+            <RoadmapView
+              roadmap={activeProject.roadmap}
+              addIdea={addIdea}
+              updateFeatureStatus={updateFeatureStatus}
+              deleteFeature={deleteFeature}
+              addVersion={addVersion}
+              editVersion={editVersion}
+              deleteVersion={deleteVersion}
+              settings={getComputedSettings()}
+              isAdmin={isAdmin}
+            />
+          )}
 
-        {currentView === 'kanban' && activeProject && (
-          <KanbanView
-            roadmap={activeProject.roadmap}
-            updateFeatureStatus={updateFeatureStatus}
-            settings={getComputedSettings()}
-          />
-        )}
+          {currentView === 'kanban' && activeProject && (
+            <KanbanView
+              roadmap={activeProject.roadmap}
+              updateFeatureStatus={updateFeatureStatus}
+              settings={getComputedSettings()}
+            />
+          )}
 
-        {currentView === 'gantt' && activeProject && (
-          <GanttView
-            roadmap={activeProject.roadmap}
-            updateFeatureDates={updateFeatureDates}
-          />
-        )}
+          {currentView === 'gantt' && activeProject && (
+            <GanttView
+              roadmap={activeProject.roadmap}
+              updateFeatureDates={updateFeatureDates}
+            />
+          )}
 
-        {currentView === 'eisenhower' && activeProject && (
-          <EisenhowerView
-            roadmap={activeProject.roadmap}
-            updateFeatureEisenhower={updateFeatureEisenhower}
-          />
-        )}
+          {currentView === 'eisenhower' && activeProject && (
+            <EisenhowerView
+              roadmap={activeProject.roadmap}
+              updateFeatureEisenhower={updateFeatureEisenhower}
+            />
+          )}
+        </Suspense>
       </main>
     </div>
   );
