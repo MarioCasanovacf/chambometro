@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "start": "node server.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -15,6 +16,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@tailwindcss/vite": "^4.2.1",
     "clsx": "^2.1.1",
+    "express": "^4.21.0",
     "firebase": "^12.9.0",
     "lucide-react": "^0.575.0",
     "react": "^19.2.0",
