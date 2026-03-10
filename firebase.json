@@ -1,7 +1,10 @@
 {
-    "firestore": {
-        "rules": "firestore.rules"
-    },
+    "firestore": [
+        {
+            "database": "chambometria",
+            "rules": "firestore.rules"
+        }
+    ],
     "hosting": {
         "site": "chambometro-capataz-3000",
         "public": "dist",
